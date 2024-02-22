@@ -452,6 +452,20 @@ scene("lose", (score) => {
 
     }
     addMessageInLines(getRandomLoseMessageAdjusted());
+    //funcion que dado un índice devuelve un numero menor cuando mayor es el indice pero que siempre da dos valores seguidos iguales. Cuando el indice es 0 el valor es el mayor posible 1 y luego va decreciendo dividiendo 1 por el emento siguiente
+    function decreaseSize(index) {
+        // Calcula el exponente basado en el índice.
+        // Cada dos índices, el exponente disminuye en 1 (ej. 0→0, 1-2→-1, 3-4→-2, etc.)
+        if (index === 0) {
+            return 1; // Retorna 1 para el índice 0.
+          } else {
+            // Para índices 1 y 2, n = 3. Para índices 3 y 4, n = 4, y así sucesivamente.
+            // Calculamos el valor de n sumando 3 al resultado de dividir el índice por 2 y redondear hacia abajo.
+            const n = Math.floor(index / 2) + 3;
+            return 2 / n; // Retorna 2 dividido por n.
+          }
+      }
+
     function alternateEvenOddIndex(index) {
         // Base case for index 0
         if (index === 0) return 0;
@@ -483,19 +497,19 @@ scene("lose", (score) => {
     function faceAlmostWin() {
         let faces = [];
         let face
-        for (let i = 0; i < 5; i++) {
+        for (let i = 9; i >=0; i--) {
             //devuelve -1 si es impar y +1 si es par
             
             face = add([
                 sprite("face"),
-                pos(width() / 2 + (alternateEvenOddIndex(i) * SCALE  * 30) + 2 * SCALE, height() / 2),
-                scale(SCALE*0.80),
+                pos(width() / 2 + (alternateEvenOddIndex(i) * SCALE  * 25)*decreaseSize(i+1) + 2 * SCALE, height() / 2),
+                scale(SCALE*decreaseSize(i+1)),
                 anchor("bot"),
             ]);
             faces.push(face);
         }
         angle = 0
-        vx = -4;
+        vx = -1;
         onUpdate(() => {
             angle += 1;
             //cambiar pos x para todas las caras
