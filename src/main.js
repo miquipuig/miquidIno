@@ -105,7 +105,7 @@ scene("game", () => {
     let respawnTime = RespawnTime();
     function showLives() {
 
-        for (let i = 0; i < lives-1; i++) {
+        for (let i = 0; i < lives - 1; i++) {
             const lifeSprite = add([
                 sprite("miquiDino"),
                 pos(80 + 60 * i, 40),
@@ -282,16 +282,16 @@ scene("game", () => {
     function onColide() {
         player.onCollide("cactus", () => {
             lives--;
-             // Destruye el sprite de la vida
+            // Destruye el sprite de la vida
 
             addBoom(player.pos.x + 34 * SCALE, player.pos.y + 20 * SCALE);
             if (lives > 0) {
                 stopCacti();
                 destroy(player);
                 wait(2, () => {
-                 
-                        livesSprites[lives-1].destroy();
-                    
+
+                    livesSprites[lives - 1].destroy();
+
                     addPlayer();
                     moving = true;
                 });
@@ -306,7 +306,7 @@ scene("game", () => {
     let score = 0;
 
     const scoreLabel = add([
-        text(score, { font: "pixelFont" }),
+        text('- ' + score + ' -', { font: "pixelFont" }),
         pos(24, 24),
     ]);
 
@@ -332,17 +332,7 @@ scene("game", () => {
 
 scene("lose", (score) => {
 
-    const face = add([
-        sprite("face"),
-        pos(width() / 2 + 10, height() / 2),
-        scale(SCALE),
-        anchor("bot"),
-        rotate(5),
 
-    ]);
-    let isFlipped = false;
-
-    let direction = 1; // Dirección de la rotación
     // display score
     add([
         text(score, { font: "pixelFont" }),
@@ -373,81 +363,215 @@ scene("lose", (score) => {
     ];
 
     const middleMessage = [
-    "You're not terrible, the game is just extra hard. Yeah, let's go with that.",
-    "Congratulations on making it halfway! The rest is just a minor detail, right?",
-    "You're halfway to legend status. Now, just the other half to go!",
-    "Impressive...ish. You've mastered the art of almost getting there.",
-    "Not quite at the finish line, but at least you found the starting line!",
-    "You're walking the tightrope between success and... almost success.",
-    "You've got the appetizer down; now for the main course!",
-    "You're the king of almost-there. All hail the nearly-there monarch!",
-    "You've passed the tutorial with flying colors. Now, onto the real game..."
+        "You're not terrible, the game is just extra hard. Yeah, let's go with that.",
+        "Congratulations on making it halfway! The rest is just a minor detail, right?",
+        "You're halfway to legend status. Now, just the other half to go!",
+        "Impressive...ish. You've mastered the art of almost getting there.",
+        "Not quite at the finish line, but at least you found the starting line!",
+        "You're walking the tightrope between success and... almost success.",
+        "You've got the appetizer down; now for the main course!",
+        "You're the king of almost-there. All hail the nearly-there monarch!",
+        "You've passed the tutorial with flying colors. Now, onto the real game..."
 
     ];
-    
-    // Función para obtener una frase aleatoria
-// Función para obtener una frase aleatoria y ajustarla si es muy larga
-function getRandomLoseMessageAdjusted() {
-    const randomIndex = Math.floor(Math.random() * loseMessages.length);
-    let message = loseMessages[randomIndex];
-    const maxLineLength = 30; // Ajusta este valor a la longitud máxima deseada por línea
-    
-    // Función para dividir el mensaje en varias líneas si es necesario
-    function splitMessageIntoLines(str, maxLength) {
-        let result = [];
-        let currentLine = '';
 
-        str.split(' ').forEach(word => {
-            if ((currentLine + word).length <= maxLength) {
-                currentLine += `${word} `;
-            } else {
+    const winMessages = [
+        "You're a winner! Or at least, you're not a loser.",
+        "Impressive! Your skills have finally caught up with your confidence.",
+        "You did it! You're officially the best at this game.",
+        "Congratulations! You've just won the game. Now what?",
+        "Champion status achieved! Was it skill, or did the game just take pity on you?",
+        "Look at you, winning and all! Did you finally read the instructions, or was it pure luck?",
+        "You've surpassed all expectations! Mainly because they were so low to begin with.",
+        "Masterful performance! It's almost like you knew what you were doing this time",
+        "You conquered the challenge! Should we check if someone was playing for you?"
+    ];
+
+
+    // Función para obtener una frase aleatoria
+    // Función para obtener una frase aleatoria y ajustarla si es muy larga
+    function getRandomLoseMessageAdjusted() {
+        let messages;
+        if (score > 7000) {
+            messages = middleMessage;
+            faceAlmostWin();
+        } else if (score > 15000) {
+            messages = winMessages;
+        } else {
+            messages = loseMessages
+            faceLose();
+        }
+
+        const randomIndex = Math.floor(Math.random() * messages.length);
+        let message = messages[randomIndex];
+        const maxLineLength = 30; // Ajusta este valor a la longitud máxima deseada por línea
+
+        // Función para dividir el mensaje en varias líneas si es necesario
+        function splitMessageIntoLines(str, maxLength) {
+            let result = [];
+            let currentLine = '';
+
+            str.split(' ').forEach(word => {
+                if ((currentLine + word).length <= maxLength) {
+                    currentLine += `${word} `;
+                } else {
+                    result.push(currentLine.trim());
+                    currentLine = `${word} `;
+                }
+            });
+
+            // Añadir lo que queda si no está vacío
+            if (currentLine.trim()) {
                 result.push(currentLine.trim());
-                currentLine = `${word} `;
+            }
+
+            return result.join('\n');
+        }
+
+        // Ajustar el mensaje si es necesario
+        if (message.length > maxLineLength) {
+            message = splitMessageIntoLines(message, maxLineLength);
+        }
+
+        return message;
+    }
+
+    // Usar la función ajustada al añadir el texto
+    function addMessageInLines(message) {
+        let lines = message.split('\n');
+
+        lines.forEach((line, index) => {
+            add([
+                text(line, { font: "pixelFont" }),
+                scale(SCALE),
+                pos(width() / 2, height() / 2 + 50 * SCALE + SCALE * 10 * index),
+                scale(SCALE * 0.3),
+                anchor("center"),
+            ]);
+        });
+
+    }
+    addMessageInLines(getRandomLoseMessageAdjusted());
+    function alternateEvenOddIndex(index) {
+        // Base case for index 0
+        if (index === 0) return 0;
+      
+        // Calculate the base number and ensure it's even
+        let baseNumber = Math.ceil(index / 2) * 2;
+      
+        // Alternate the sign based on whether the index is even or odd
+        // Even indices get a positive sign, odd indices get negative
+        let sign = index % 2 === 0 ? 1 : -1;
+      
+        return baseNumber * sign;
+      }
+      
+     
+    function alternarNumerosParImpar(indice) {
+        // Caso base para el índice 0
+        if (indice === 0) return 0;
+      
+        // Calculamos el número base y aseguramos que sea par
+        let numeroBase = Math.ceil(indice / 2) * 2;
+      
+        // Alternamos el signo basándonos en si el índice es par o impar
+        // Los índices pares obtienen un signo positivo, los impares negativo
+        let signo = indice % 2 === 0 ? 1 : -1;
+      
+        return numeroBase * signo;
+      }
+    function faceAlmostWin() {
+        let faces = [];
+        let face
+        for (let i = 0; i < 5; i++) {
+            //devuelve -1 si es impar y +1 si es par
+            
+            face = add([
+                sprite("face"),
+                pos(width() / 2 + (alternateEvenOddIndex(i) * SCALE  * 30) + 2 * SCALE, height() / 2),
+                scale(SCALE*0.80),
+                anchor("bot"),
+            ]);
+            faces.push(face);
+        }
+        angle = 0
+        vx = -4;
+        onUpdate(() => {
+            angle += 1;
+            //cambiar pos x para todas las caras
+            faces.forEach(face => {
+                face.pos.x += vx;
+            });
+        
+        });
+
+        count = 0
+        loop(0.2, () => {
+   
+            //tiro una moneda al aire usando rand
+            if(randi(0, 2) === 1){
+
+                size=rand(0.5,1)
+                let dino= add([
+                    sprite("miquiDino"),
+                    pos(0, height() *9/ 10+size*SCALE*30),
+                    scale(SCALE*size),
+                    anchor("bot"),
+                    move(RIGHT, randi(400,600)),
+                ]);
+                dino.play("run");
             }
         });
 
-        // Añadir lo que queda si no está vacío
-        if (currentLine.trim()) {
-            result.push(currentLine.trim());
-        }
 
-        return result.join('\n');
+
+        loop(0.6, () => {
+        
+            //Si count es impar
+            if (count % 2 == 1) {
+                
+                vx *= -1;
+                ///cambiar la escala de todas las caras
+                faces.forEach(face => {
+                    face.scale.x = -face.scale.x;
+                });
+            }
+            count++;
+
+
+        });
     }
 
-    // Ajustar el mensaje si es necesario
-    if (message.length > maxLineLength) {
-        message = splitMessageIntoLines(message, maxLineLength);
+    function faceLose() {
+        const face = add([
+            sprite("face"),
+            pos(width() / 2 + 10, height() / 2),
+            scale(SCALE),
+            anchor("bot"),
+            rotate(5),
+
+        ]);
+        let isFlipped = false;
+
+        let direction = 1; // Dirección de la rotación
+        loop(0.7, () => {
+            isFlipped = !isFlipped;
+            face.scale.x = isFlipped ? -SCALE : SCALE;
+
+            // Cambiar la dirección de la rotación cada vez
+            direction *= -1;
+            // Convertir grados a radianes para la rotación y aplicarla
+            face.angle = -direction * 10;
+            face.pos.x += direction * 20;
+        });
     }
-
-    return message;
-}
-
-// Usar la función ajustada al añadir el texto
-add([
-    text(getRandomLoseMessageAdjusted(), { font: "pixelFont", size: 24 }),
-    pos(width() / 2, height() / 2 + 130),
-    scale(SCALE / 2),
-    anchor("center"),
-]);
-
-    loop(0.7, () => {
-        isFlipped = !isFlipped;
-        face.scale.x = isFlipped ? -SCALE : SCALE;
-
-        // Cambiar la dirección de la rotación cada vez
-        direction *= -1;
-        // Convertir grados a radianes para la rotación y aplicarla
-        face.angle = -direction * 10;
-        face.pos.x += direction * 20;
-    });
     // go back to game with space is pressed
     onKeyPress("space", () => go("game"));
     onClick(() => go("game"));
-
 });
 
 scene("start", (score) => {
-    const STARTGRAVITY = 0.07;
+    const STARTGRAVITY = 0.1;
     const ROPELENGTH = height() / 2;
     let swinging = true;
     direction = 1; // Dirección de la rotación
@@ -483,17 +607,13 @@ scene("start", (score) => {
     // });
     onUpdate(() => {
         const tiempo = time() * velocidadBalanceo;
-
-        pendulumPositionAtAngle(tiempo);
-
         mainCharacter.pos.x = positionCharacter.x;
         mainCharacter.pos.y = positionCharacter.y;
         mainCharacter.angle = positionCharacter.angle;
         rope.pos.x = positionRope.x;
         rope.pos.y = positionRope.y;
         rope.angle = positionRope.angle;
-
-
+        pendulumPositionAtAngle(tiempo);
     });
     function pendulumPositionAtAngle(tiempo) {
 
@@ -551,4 +671,4 @@ scene("start", (score) => {
 
 });
 
-go("start");
+go("lose", 8000);
