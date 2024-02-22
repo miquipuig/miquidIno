@@ -1,0 +1,16 @@
+{
+	"name": "mygame",
+	"scripts": {
+		"install":"cp src/main.js src/main_temp.js && replace  'sprites/' 'assets/jueguito/sprites/' src/main_temp.js && esbuild src/main_temp.js --bundle > www/main.js && ncp src/main.js ../../home/personalPage/src/assets/jueguito/main.js && ncp www ../../home/personalPage/src/assets/jueguito/ -r && rm src/main_temp.js",
+		"build": "esbuild --bundle src/main.js --outfile=www/main.js --minify",
+		"dev": "esbuild --bundle src/main.js --outfile=www/main.js --servedir=www",
+		"bundle": "npm run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\"",
+		"start":"cp src/main.js src/main_temp.js && replace  'import kaboom from \"kaboom\"' '' src/main_temp.js'' && mv src/main_temp.js www/main.js && python3 -m http.server  --directory www"
+	},
+	"dependencies": {
+		"kaboom": "^3000.1.17"
+	},
+	"devDependencies": {
+		"esbuild": "^0.20.1"
+	}
+}
