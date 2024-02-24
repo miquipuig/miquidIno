@@ -46,6 +46,29 @@ const JUMP_FORCE = 1700;
 const GRAVITY = 4000;
 let SPEED = 10;
 let score = 0;
+let numHorizon = 12;
+
+const randn_bm = (min, max, skew = 1) => {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while (v === 0) v = Math.random();
+    let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+
+    num = num / 10.0 + 0.5; // Translate to 0 -> 1
+    if (num > 1 || num < 0) num = randn_bm(min, max, skew); // resample between 0 and 1 if out of range
+    num = Math.pow(num, skew); // Skew
+    num *= max - min; // Stretch to fill range
+    num += min; // offset to min
+    return num;
+}
+
+function randParallax(min = 0, max = numHorizon) {
+    let num = randn_bm(-30, 70, 1);
+    while (num < 0 || num > 10) {
+        num = randn_bm(-30, 70, 1);
+    }
+    return Math.round(num); // Redondear el número al entero más cercano
+}
 
 loadFont("pixelFont", "fonts/Minecraft.ttf");
 
@@ -188,11 +211,11 @@ scene("game", () => {
     //     horizonSeparation += numHorizon * SCALE / (numHorizon - i);
     // }
 
-    let horizonColor = 130
+    const horizonColor = 130
     let horizonSeparation = 0;
-    let numHorizon = 10;
+    const horizonM=7;
     for (let i = 1; i < numHorizon; i++) {
-        horizonSeparation += 5 * SCALE - i * 5 * SCALE / numHorizon;
+        horizonSeparation += horizonM * SCALE - i * horizonM * SCALE / numHorizon;
         add([
             rect(width(), FLOOR_HEIGHT / 2),
             // outline(4),
@@ -203,36 +226,39 @@ scene("game", () => {
         ]);
     }
 
+
+
     function addParallax() {
-        
+
         let frameIndex = randi(0, 5);
-        let far = randi(1, numHorizon);
+        let far = randParallax(1, numHorizon);
+        console.log(far);
         let par;
         let parallaxColor = 150;
-        let horizonSeparation2 =0;
-        for(let i = 1; i < far; i++){
-            horizonSeparation2 += 5 * SCALE - i * 5 * SCALE / numHorizon;
+        let horizonSeparation2 = 0;
+        for (let i = 1; i < far; i++) {
+            horizonSeparation2 += horizonM * SCALE - i * horizonM * SCALE / numHorizon;
         }
 
         if (frameIndex == 4) {
             par = add([
                 sprite("cactus2"),
-                scale(SCALE -(far+1)*SCALE/numHorizon),
+                scale(SCALE - (far + 2) * SCALE / numHorizon),
                 pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
                 anchor("botleft"),
                 "cactus",
-                speed(SPEED -(far+1)*SPEED/numHorizon),
-                color(parallaxColor -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon)
+                speed(SPEED - (far + 1) * SPEED / numHorizon),
+                color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
             ]);
         } else if (frameIndex < 4) {
             par = add([
                 sprite("cactus", { frame: frameIndex }),
-                scale(SCALE -(far+1)*SCALE/numHorizon),
+                scale(SCALE - (far + 2) * SCALE / numHorizon),
                 pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
                 anchor("botleft"),
                 "cactus",
-                speed(SPEED -(far+1)*SPEED/numHorizon),
-                color(parallaxColor -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon)
+                speed(SPEED - (far + 1) * SPEED / numHorizon),
+                color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
             ]);
         }
 
@@ -279,6 +305,7 @@ scene("game", () => {
     let cacti = [];
     let parallax = [];
     let moving = true;
+    let spawn = true;
 
     function addBird() {
 
@@ -290,7 +317,7 @@ scene("game", () => {
             anchor("botleft"),
             "cactus",
             speed(SPEED * 1.3),
-            z(10)
+            z(120)
         ]);
         bird.play("fly");
         cacti.push(bird); // Añadir el cactus al array de cacti
@@ -312,7 +339,8 @@ scene("game", () => {
                 anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
-                speed(SPEED)
+                speed(SPEED),
+                z(100)
             ]);
         } else if (frameIndex < 4) {
             cactus = add([
@@ -323,7 +351,8 @@ scene("game", () => {
                 anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
-                speed(SPEED)
+                speed(SPEED),
+                z(100)
             ]);
         } else {
             cactus = add([ // add a game object to screen  
@@ -333,7 +362,8 @@ scene("game", () => {
                 area({ shape: new Polygon([vec2(23, 0), vec2(36, 0), vec2(36, -45), vec2(23, -45)]) }),
                 anchor("botleft"),
                 speed(SPEED),
-                "cactus"
+                "cactus",
+                z(100)
             ]);
             cactus.play("wait");
         }
@@ -359,7 +389,7 @@ scene("game", () => {
 
 
     function spawnCactus() {
-        if (moving) {
+        if (moving & spawn) {
             addCactus();
         }
 
@@ -371,11 +401,11 @@ scene("game", () => {
         if (moving) {
             addParallax();
         }
-        wait(rand(0.1, 0.3), spawnParallax);
+        wait(rand(0.05, 0.2), spawnParallax);
     }
 
     function spawnBird() {
-        if (moving && score > 3000) {
+        if (moving && spawn&&score > 3000) {
             addBird(); // Llama a la función para añadir un cactus
         }
         wait(respawnTime.getRandom() * 4, spawnBird);
@@ -430,6 +460,7 @@ scene("game", () => {
 
     function stopCacti() {
         moving = false; // Cambia el estado para detener el movimiento
+        spawn = false;
     }
     function addBoom(x, y) {
         let boom = add([
@@ -457,12 +488,14 @@ scene("game", () => {
             if (lives > 0) {
                 stopCacti();
                 destroy(player);
-                wait(2, () => {
-
-                    livesSprites[lives - 1].destroy();
-
-                    addPlayer();
+                wait(1, () => {
                     moving = true;
+                    wait(2.5, () => { 
+                    spawn=true
+                    livesSprites[lives - 1].destroy();
+                    addPlayer();
+                   
+                    });
                 });
             } else {
                 go("lose", score);
