@@ -5,7 +5,7 @@ export const gameLose = (score) => {
     add([
         text(score, { font: "pixelFont" }),
         pos(width() / 2, height() / 2 + 80),
-        scale(2),
+        scale(SCALE*1.25),
         anchor("center"),
 
     ]);
@@ -227,8 +227,8 @@ export const gameLose = (score) => {
         });
     }
     function faceWin() {
-        let aa=0.1
-        let va=1
+        let aa=0
+        let va=0
         let faceList = [];
         let pingpong=false;
         const face = add([
@@ -295,6 +295,10 @@ export const gameLose = (score) => {
                 },
             }
         }
+        wait(1, () => {
+
+            aa = 0.1;
+            va = 1;
 
         wait(5, () => {
             let boom= add([
@@ -334,7 +338,7 @@ export const gameLose = (score) => {
            
             
         });
-
+    });
     }
     function faceLose() {
         let vx = 10 * SCALE;
@@ -386,6 +390,9 @@ export const gameLose = (score) => {
     function goToGame() {
         gooo = true;
         wait(1.5, () => {
+            destroyAll('dino');
+            destroyAll('face');
+            
             go("game");
         });
     }

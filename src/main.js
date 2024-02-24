@@ -45,6 +45,8 @@ const FLOOR_COLLISION = 30;
 const JUMP_FORCE = 1700;
 const GRAVITY = 4000;
 let SPEED = 10;
+let score = 0;
+
 loadFont("pixelFont", "fonts/Minecraft.ttf");
 
 loadSpriteAtlas("sprites/miquiDino.png", {
@@ -56,12 +58,45 @@ loadSpriteAtlas("sprites/miquiDino.png", {
         sliceX: 3,
         anims: {
             idle: 0,
-            run: { from: 1, to: 2, speed: 10, loop: true },
+            run: { from: 1, to: 2, speed: 15, loop: true },
             jump: 2,
         },
 
     }
 });
+
+loadSpriteAtlas("sprites/mexican.png", {
+    "mexican": {
+        x: 0,
+        y: 0,
+        width: 1344,
+        height: 64,
+        sliceX: 21,
+        anims: {
+            idle: 0,
+            wait: { from: 0, to: 20, speed: 10, loop: true },
+            jump: 2,
+        },
+
+    }
+});
+
+loadSpriteAtlas("sprites/bird.png", {
+    "bird": {
+        x: 0,
+        y: 0,
+        width: 512,
+        height: 64,
+        sliceX: 8,
+        anims: {
+            idle: 0,
+            fly: { from: 0, to: 7, speed: 10, loop: true }
+        },
+
+    }
+});
+
+
 
 loadSpriteAtlas("sprites/boom.png", {
     "boom": {
@@ -119,12 +154,15 @@ scene("game", () => {
             livesSprites.push(lifeSprite); // Añade el sprite al array
         }
     }
+
+
+    console.log("INICIO");
     showLives();
     // define gravity
     setGravity(GRAVITY);
 
     // add a game object to screen
-    // floor
+
     add([
         rect(width(), FLOOR_HEIGHT),
         // outline(4),
@@ -132,9 +170,76 @@ scene("game", () => {
         anchor("botleft"),
         area({ offset: vec2(0, FLOOR_COLLISION) }),
         body({ isStatic: true }),
-        color(127, 127, 127),
+        color(200, 200, 200),
         "floor"
     ]);
+    // let horizonColor = 100
+    // let horizonSeparation = 5 * SCALE;
+    // let numHorizon = 50;
+    // for (let i = 1; i < numHorizon; i++) {
+    //     add([
+    //         rect(width(), FLOOR_HEIGHT / 2),
+    //         // outline(4),
+    //         pos(0, height() - FLOOR_HEIGHT - FLOOR_HIGHT - horizonSeparation),
+    //         anchor("botleft"),
+    //         color(horizonColor - i * horizonColor / numHorizon, horizonColor  -i * horizonColor / numHorizon, horizonColor -i * horizonColor / numHorizon),
+    //         "horizon"
+    //     ]);
+    //     horizonSeparation += numHorizon * SCALE / (numHorizon - i);
+    // }
+
+    let horizonColor = 130
+    let horizonSeparation = 0;
+    let numHorizon = 10;
+    for (let i = 1; i < numHorizon; i++) {
+        horizonSeparation += 5 * SCALE - i * 5 * SCALE / numHorizon;
+        add([
+            rect(width(), FLOOR_HEIGHT / 2),
+            // outline(4),
+            pos(0, height() - FLOOR_HEIGHT - FLOOR_HIGHT - horizonSeparation),
+            anchor("botleft"),
+            color(horizonColor - i * horizonColor / numHorizon, horizonColor - i * horizonColor / numHorizon, horizonColor - i * horizonColor / numHorizon),
+            "horizon"
+        ]);
+    }
+
+    function addParallax() {
+        
+        let frameIndex = randi(0, 5);
+        let far = randi(1, numHorizon);
+        let par;
+        let parallaxColor = 150;
+        let horizonSeparation2 =0;
+        for(let i = 1; i < far; i++){
+            horizonSeparation2 += 5 * SCALE - i * 5 * SCALE / numHorizon;
+        }
+
+        if (frameIndex == 4) {
+            par = add([
+                sprite("cactus2"),
+                scale(SCALE -(far+1)*SCALE/numHorizon),
+                pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
+                anchor("botleft"),
+                "cactus",
+                speed(SPEED -(far+1)*SPEED/numHorizon),
+                color(parallaxColor -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon)
+            ]);
+        } else if (frameIndex < 4) {
+            par = add([
+                sprite("cactus", { frame: frameIndex }),
+                scale(SCALE -(far+1)*SCALE/numHorizon),
+                pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
+                anchor("botleft"),
+                "cactus",
+                speed(SPEED -(far+1)*SPEED/numHorizon),
+                color(parallaxColor -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon, parallaxColor  -far*parallaxColor/numHorizon)
+            ]);
+        }
+
+        parallax.push(par); // Añadir el cactus al array de cacti
+        parallax.length > 1000 && destroy(parallax.shift());
+    }
+
 
 
     addPlayer();
@@ -149,6 +254,7 @@ scene("game", () => {
                 shape: new Polygon([vec2(0), vec2(32, 0), vec2(25, 52), vec2(5, 52)]),
             }),
             body(),
+            z(5000),
         ]);
         onColide();
         player.onCollide("floor", () => {
@@ -171,11 +277,32 @@ scene("game", () => {
     onKeyPress("space", jump);
     onClick(jump);
     let cacti = [];
+    let parallax = [];
     let moving = true;
+
+    function addBird() {
+
+        let bird = add([
+            sprite("bird"),
+            scale(-SCALE, SCALE),
+            area({ shape: new Polygon([vec2(10, -20), vec2(10, -60), vec2(40, -60), vec2(40, -20)]) }),
+            pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE * randi(0, 2)),
+            anchor("botleft"),
+            "cactus",
+            speed(SPEED * 1.3),
+            z(10)
+        ]);
+        bird.play("fly");
+        cacti.push(bird); // Añadir el cactus al array de cacti
+    }
 
     function addCactus() {
         let cactus;
-        let frameIndex = randi(0, 5);
+        let frameIndex = randi(0, 21);
+        if (frameIndex < 20) {
+            frameIndex = frameIndex % 5
+        }
+        console.log(frameIndex);
         if (frameIndex == 4) {
             cactus = add([
                 sprite("cactus2"),
@@ -185,9 +312,9 @@ scene("game", () => {
                 anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
-                speed()
+                speed(SPEED)
             ]);
-        } else {
+        } else if (frameIndex < 4) {
             cactus = add([
                 sprite("cactus", { frame: frameIndex }),
                 scale(SCALE, SCALE),
@@ -196,15 +323,28 @@ scene("game", () => {
                 anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
-                speed()
+                speed(SPEED)
             ]);
+        } else {
+            cactus = add([ // add a game object to screen  
+                sprite("mexican"), // render as a sprite
+                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION), // position in world
+                scale(-SCALE, SCALE),
+                area({ shape: new Polygon([vec2(23, 0), vec2(36, 0), vec2(36, -45), vec2(23, -45)]) }),
+                anchor("botleft"),
+                speed(SPEED),
+                "cactus"
+            ]);
+            cactus.play("wait");
         }
         cacti.push(cactus); // Añadir el cactus al array de cacti
-        cacti.length > 5 && destroy(cacti.shift());
     }
 
-    function speed() {
-        let speed = SPEED;
+
+
+
+    function speed(sp) {
+        let speed = sp;
         return {
             getSpeed() {
                 return speed;
@@ -224,8 +364,27 @@ scene("game", () => {
         }
 
         wait(respawnTime.getRandom(), spawnCactus);
+        cacti.length > 5 && destroy(cacti.shift());
+
+    }
+    function spawnParallax() {
+        if (moving) {
+            addParallax();
+        }
+        wait(rand(0.1, 0.3), spawnParallax);
+    }
+
+    function spawnBird() {
+        if (moving && score > 3000) {
+            addBird(); // Llama a la función para añadir un cactus
+        }
+        wait(respawnTime.getRandom() * 4, spawnBird);
+        cacti.length > 5 && destroy(cacti.shift());
+
     }
     spawnCactus();
+    spawnBird();
+    spawnParallax();
 
     function RespawnTime() {
         let factor = 1;
@@ -250,6 +409,14 @@ scene("game", () => {
         cacti.forEach(cactus => {
             if (moving) {
                 cactus.pos.x -= cactus.getSpeed();
+            }
+        });
+    }
+
+    function updateParallaxMovement() {
+        parallax.forEach(par => {
+            if (moving) {
+                par.pos.x -= par.getSpeed();
             }
         });
     }
@@ -305,7 +472,6 @@ scene("game", () => {
 
 
     // keep track of score
-    let score = 0;
 
     const scoreLabel = add([
         text('- ' + score + ' -', { font: "pixelFont" }),
@@ -313,15 +479,16 @@ scene("game", () => {
     ]);
 
     function velocityUp() {
-        setCactiSpeed(SPEED * 1.05);
+        setCactiSpeed(SPEED * 1.04 ** (score / 2000));
     }
     function respawnUp() {
-        respawnTime.setRespawnFactor(respawnTime.getFactor() * 0.95);
+        respawnTime.setRespawnFactor(respawnTime.getFactor() * 0.99 ** (score / 1000));
     }
 
     // increment score every frame
     onUpdate(() => {
         updateCactiMovement();
+        updateParallaxMovement();
         score++;
         scoreLabel.text = score;
         if (score % 500 === 0) {
@@ -335,4 +502,4 @@ scene("game", () => {
 
 scene("start", gameStart);
 scene("lose", gameLose);
-go("lose",20000);
+go("game");
