@@ -38,15 +38,15 @@ kaboom({
 // 	pos(120, 80),
 // 	sprite("bean"),
 // ])
-const FLOOR_HEIGHT = 4;
 const SCALE = 2.5;
-const FLOOR_HIGHT = 100;
-const FLOOR_COLLISION = 30;
+const FLOOR_HEIGHT = 4;
+const FLOOR_HIGHT = 40*SCALE;
+const FLOOR_COLLISION = 5*SCALE;
 const JUMP_FORCE = 1700;
 const GRAVITY = 4000;
 let SPEED = 10;
 let score = 0;
-let numHorizon = 12;
+const numHorizon = 12;
 
 const randn_bm = (min, max, skew = 1) => {
     let u = 0, v = 0;
@@ -130,7 +130,7 @@ loadSpriteAtlas("sprites/boom.png", {
         sliceX: 19,
         anims: {
             boom: { from: 0, to: 18, speed: 19 },
-        },
+        }
 
     }
 });
@@ -232,7 +232,6 @@ scene("game", () => {
 
         let frameIndex = randi(0, 5);
         let far = randParallax(1, numHorizon);
-        console.log(far);
         let par;
         let parallaxColor = 150;
         let horizonSeparation2 = 0;
@@ -277,7 +276,7 @@ scene("game", () => {
             scale(SCALE, SCALE),
             area({
                 offset: vec2(12, 3),
-                shape: new Polygon([vec2(0), vec2(32, 0), vec2(25, 52), vec2(5, 52)]),
+                shape: new Polygon([vec2(16,5), vec2(28, 5), vec2(25, 47), vec2(10, 47)]),
             }),
             body(),
             z(5000),
@@ -312,7 +311,7 @@ scene("game", () => {
         let bird = add([
             sprite("bird"),
             scale(-SCALE, SCALE),
-            area({ shape: new Polygon([vec2(10, -20), vec2(10, -60), vec2(40, -60), vec2(40, -20)]) }),
+            area({ shape: new Polygon([vec2(15, -25), vec2(15, -50), vec2(35, -50), vec2(35, -25)]) }),
             pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE * randi(0, 2)),
             anchor("botleft"),
             "cactus",
@@ -334,8 +333,8 @@ scene("game", () => {
             cactus = add([
                 sprite("cactus2"),
                 scale(SCALE, SCALE),
-                area({ shape: new Polygon([vec2(2), vec2(48, 0), vec2(46, -45), vec2(4, -45)]) }),
-                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION),
+                area({ shape: new Polygon([vec2(2,7), vec2(48, 0), vec2(46, -45), vec2(4, -45)]) }),
+                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7),
                 anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
@@ -347,7 +346,7 @@ scene("game", () => {
                 sprite("cactus", { frame: frameIndex }),
                 scale(SCALE, SCALE),
                 area({ shape: new Polygon([vec2(2), vec2(23, 0), vec2(21, -45), vec2(4, -45)]) }),
-                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION),
+                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7),
                 anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
@@ -357,7 +356,7 @@ scene("game", () => {
         } else {
             cactus = add([ // add a game object to screen  
                 sprite("mexican"), // render as a sprite
-                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION), // position in world
+                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7), // position in world
                 scale(-SCALE, SCALE),
                 area({ shape: new Polygon([vec2(23, 0), vec2(36, 0), vec2(36, -45), vec2(23, -45)]) }),
                 anchor("botleft"),
@@ -405,7 +404,7 @@ scene("game", () => {
     }
 
     function spawnBird() {
-        if (moving && spawn&&score > 3000) {
+        if (moving && spawn&&score > 0) {
             addBird(); // Llama a la función para añadir un cactus
         }
         wait(respawnTime.getRandom() * 4, spawnBird);
@@ -468,11 +467,13 @@ scene("game", () => {
             anchor("center"),
             pos(x, y),
             scale(SCALE),
+            z(100000),
             "boom",
         ]);
         boom.play("boom", {
             loop: false
         });
+        shake();
 
         wait(1, () => {
             destroy(boom);
@@ -485,9 +486,10 @@ scene("game", () => {
             // Destruye el sprite de la vida
 
             addBoom(player.pos.x + 34 * SCALE, player.pos.y + 20 * SCALE);
-            if (lives > 0) {
+          
                 stopCacti();
                 destroy(player);
+                if (lives > 0) {
                 wait(1, () => {
                     moving = true;
                     wait(2.5, () => { 
@@ -498,7 +500,10 @@ scene("game", () => {
                     });
                 });
             } else {
-                go("lose", score);
+                wait(0.5, () => {
+                    go("lose", score);
+
+                });
             }
         });
     }
@@ -522,7 +527,9 @@ scene("game", () => {
     onUpdate(() => {
         updateCactiMovement();
         updateParallaxMovement();
-        score++;
+        if(moving){
+            score++;
+        }
         scoreLabel.text = score;
         if (score % 500 === 0) {
             respawnUp();

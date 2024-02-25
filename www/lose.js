@@ -202,7 +202,9 @@ export const gameLose = (score) => {
                     scale(SCALE * size),
                     anchor("bot"),
                     move(RIGHT, randi(400, 600)),
-                    "dino"
+                    "dino",
+                    z(size),
+                    
                 ]);
                 dino.play("run");
             }
