@@ -42,10 +42,12 @@ const SCALE = 2.5;
 const FLOOR_HEIGHT = 4;
 const FLOOR_HIGHT = 40*SCALE;
 const FLOOR_COLLISION = 5*SCALE;
-const JUMP_FORCE = 1700;
-const GRAVITY = 4000;
+// const JUMP_FORCE = 1700;
+// const GRAVITY = 4000;
+const JUMP_FORCE = 2500;
+let GRAVITY = 8000;
 let SPEED = 10;
-let score = 0;
+
 const numHorizon = 12;
 
 const randn_bm = (min, max, skew = 1) => {
@@ -119,6 +121,62 @@ loadSpriteAtlas("sprites/bird.png", {
     }
 });
 
+loadSpriteAtlas("sprites/clouds.png", {
+    "cloud1": {
+        x: 4,
+        y: 13,
+        width: 54,
+        height: 30,
+    }
+});
+
+loadSpriteAtlas("sprites/clouds.png", {
+    "cloud2": {
+        x: 7,
+        y: 12,
+        width: 54,
+        height: 30,
+    }
+});
+loadSpriteAtlas("sprites/clouds.png", {
+    "cloud3": {
+        x: 60,
+        y: 11,
+        width: 65,
+        height: 20,
+    }
+});
+
+loadSpriteAtlas("sprites/clouds.png", {
+    "cloud4": {
+        x: 60,
+        y: 38,
+        width: 65,
+        height: 23,
+    }
+});
+
+loadSpriteAtlas("sprites/clouds.png", {
+    "cloud5": {
+        x: 60,
+        y: 66,
+        width: 65,
+        height: 23,
+    }
+});
+
+loadSpriteAtlas("sprites/clouds.png", {
+    "cloud6": {
+        x: 6,
+        y: 86,
+        width: 114,
+        height: 31,
+    }
+});
+
+
+// loadSprite("cloud1","sprites/clouds.png");
+
 
 
 loadSpriteAtlas("sprites/boom.png", {
@@ -137,28 +195,12 @@ loadSpriteAtlas("sprites/boom.png", {
 
 
 
-loadSpriteAtlas("sprites/miquiCactus.png", {
-    "cactus": {
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 50,
-        sliceX: 4,
-    }
-});
-loadSpriteAtlas("sprites/miquiCactus.png", {
-    "cactus2": {
-        x: 100,
-        y: 0,
-        width: 50,
-        height: 50
-    }
-});
-
-
 loadSprite("face", "sprites/miquiFace.png")
 
+
+
 scene("game", () => {
+    let score = 0;
     let player;
     let lives = 4;
     let livesSprites = []; // Array para almacenar los sprites de las vidas
@@ -172,19 +214,12 @@ scene("game", () => {
                 scale(SCALE / 2),
                 rotate(30),
                 color(255, 255, 255),
+                z(1000),
             ]);
 
             livesSprites.push(lifeSprite); // Añade el sprite al array
         }
     }
-
-
-    console.log("INICIO");
-    showLives();
-    // define gravity
-    setGravity(GRAVITY);
-
-    // add a game object to screen
 
     add([
         rect(width(), FLOOR_HEIGHT),
@@ -196,6 +231,15 @@ scene("game", () => {
         color(200, 200, 200),
         "floor"
     ]);
+
+
+    showLives();
+    // define gravity
+    setGravity(3000);
+
+    // add a game object to screen
+
+    
     // let horizonColor = 100
     // let horizonSeparation = 5 * SCALE;
     // let numHorizon = 50;
@@ -226,6 +270,22 @@ scene("game", () => {
         ]);
     }
 
+    function addCloud(){
+        let cloudIndex = randi(1, 6);
+        let cloud = add([
+            sprite("cloud"+cloudIndex),
+            scale(SCALE),
+            pos(5*width()/4, rand(0, height()/2)),
+            anchor("center"),
+            "cloud",
+            speed(SPEED/8),
+            z(0),
+            color(220, 220, 220)
+        ]);
+
+        clouds.push(cloud); // Añadir el cactus al array de cacti
+        clouds.length > 10 && destroy(clouds.shift());
+    }
 
 
     function addParallax() {
@@ -262,7 +322,7 @@ scene("game", () => {
         }
 
         parallax.push(par); // Añadir el cactus al array de cacti
-        parallax.length > 1000 && destroy(parallax.shift());
+        parallax.length > 80 && destroy(parallax.shift());
     }
 
 
@@ -283,8 +343,8 @@ scene("game", () => {
         ]);
         onColide();
         player.onCollide("floor", () => {
-            console.log("floor");
             player.play("run");
+            setGravity(GRAVITY);
         });
     }
 
@@ -303,6 +363,7 @@ scene("game", () => {
     onClick(jump);
     let cacti = [];
     let parallax = [];
+    let clouds= [];
     let moving = true;
     let spawn = true;
 
@@ -312,7 +373,9 @@ scene("game", () => {
             sprite("bird"),
             scale(-SCALE, SCALE),
             area({ shape: new Polygon([vec2(15, -25), vec2(15, -50), vec2(35, -50), vec2(35, -25)]) }),
-            pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE * randi(0, 2)),
+            // pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE * randi(0, 2)),
+            pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE),
+
             anchor("botleft"),
             "cactus",
             speed(SPEED * 1.3),
@@ -328,7 +391,6 @@ scene("game", () => {
         if (frameIndex < 20) {
             frameIndex = frameIndex % 5
         }
-        console.log(frameIndex);
         if (frameIndex == 4) {
             cactus = add([
                 sprite("cactus2"),
@@ -403,8 +465,15 @@ scene("game", () => {
         wait(rand(0.05, 0.2), spawnParallax);
     }
 
+    function spawnCloud() {
+        if (moving) {
+            addCloud();
+        }
+        wait(rand(2, 6), spawnCloud);
+    }
+
     function spawnBird() {
-        if (moving && spawn&&score > 0) {
+        if (moving && spawn&&score > 3000) {
             addBird(); // Llama a la función para añadir un cactus
         }
         wait(respawnTime.getRandom() * 4, spawnBird);
@@ -414,6 +483,7 @@ scene("game", () => {
     spawnCactus();
     spawnBird();
     spawnParallax();
+    spawnCloud();
 
     function RespawnTime() {
         let factor = 1;
@@ -450,6 +520,14 @@ scene("game", () => {
         });
     }
 
+    function updateCloudMovement() {
+        clouds.forEach(par => {
+            if (moving) {
+                par.pos.x -= par.getSpeed();
+            }
+        });
+    }
+
     function setCactiSpeed(speed) {
         SPEED = speed;
         cacti.forEach(cactus => {
@@ -473,6 +551,7 @@ scene("game", () => {
         boom.play("boom", {
             loop: false
         });
+        setGravity(3000);
         shake();
 
         wait(1, () => {
@@ -513,33 +592,59 @@ scene("game", () => {
 
     const scoreLabel = add([
         text('- ' + score + ' -', { font: "pixelFont" }),
-        pos(24, 24),
+        pos(24, 24),z(1000)
+    ]);
+    const speedLabel = add([
+        text('speed:' + SPEED, { font: "pixelFont" }),
+        pos(width()-20, 20),
+        anchor("topright"),z(1000)
+    ]);
+    const spawnLabel = add([
+        text('Level: ' + respawnTime, { font: "pixelFont" }),
+        pos(width()-20, 60),
+        anchor("topright"),z(1000)
+
     ]);
 
     function velocityUp() {
-        setCactiSpeed(SPEED * 1.04 ** (score / 2000));
+        setCactiSpeed(SPEED + 1.01);
     }
     function respawnUp() {
-        respawnTime.setRespawnFactor(respawnTime.getFactor() * 0.99 ** (score / 1000));
+        respawnTime.setRespawnFactor(respawnTime.getFactor() * 0.99);
     }
 
     // increment score every frame
     onUpdate(() => {
         updateCactiMovement();
         updateParallaxMovement();
+        updateCloudMovement();
         if(moving){
             score++;
         }
-        scoreLabel.text = score;
-        if (score % 500 === 0) {
-            respawnUp();
-        } else if (score % 2000 === 0) {
-            velocityUp();
+        scoreLabel.text = '- '+score+' -';
+        let speedtext = SPEED
+        speedLabel.text =  'Speed: '+ Math.floor(SPEED -10)
+        spawnLabel.text = 'Level: '+ Math.floor((1-respawnTime.getFactor())*1000);  
+
+        //define Lebels
+        if(score <5000){
+            if (score % 500 === 0) {
+                velocityUp();
+            } 
+        }else if(score===5000){
+            SPEED = 10;
+        }else if(score>5000){
+            if (score % 500 === 0) {
+                respawnUp();
+            } if (score % 500 === 0 &&SPEED<20) {
+                velocityUp();
+            }
         }
+        
     });
 });
 
 
 scene("start", gameStart);
 scene("lose", gameLose);
-go("game");
+go("start");

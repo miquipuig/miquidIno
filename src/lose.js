@@ -60,7 +60,7 @@ export const gameLose = (score) => {
     // Función para obtener una frase aleatoria y ajustarla si es muy larga
     function getRandomLoseMessageAdjusted() {
         let messages;
-        if (score > 15000) {
+        if (score > 14000) {
             messages = winMessages;
             faceWin();
 
@@ -287,7 +287,6 @@ export const gameLose = (score) => {
 
 
             let speed={vx,vy,vangle:rand(-1,1)};
-            console.log(speed);
             return {
                 getSpeed() {
                     return speed;
@@ -308,11 +307,12 @@ export const gameLose = (score) => {
                 pos(width() / 2 + 10, height() / 2+-SCALE*20),
                 scale(SCALE*2),
                 anchor("center"),
-                "boom"
+                "boom",
             ]);
             boom.play("boom", {
                 loop: false
             });
+            shake()
             destroy(face);
 
 
