@@ -1,50 +1,43 @@
 import kaboom from "kaboom"
 import { gameStart } from "./start.js";
 import { gameLose } from "./lose.js";
-// kaboom()
+// kabum()
 
-kaboom({
-    global: true,
+export const kabum = kaboom({
     fullscreen: true,
     font: "sans-serif",
-    // width: 320,
-    // height: 240,
-    scale: 1,
-    debug: true,
+    scale: 0.8,
+    debug: false,
     background: [255, 255, 255, 0],
-    root: document.getElementById('jueguito'), // Especifica el contenedor del juego
-    // width: 600, // Ancho del canvas, asegúrate de que coincida con el contenedor
-    // height: 400, // Alto del canvas, asegúrate de que coincida con el contenedor
-    // Puedes añadir aquí más configuraciones según necesites
+    root: document.getElementById('jueguito'), // Especifica el contenedor del juek.go,
+    global: false
 })
 
-// clearColor(0, 0, 0, 1)
-// document.body.style.backgroundColor = "red";
-// setGravity(2400)
-// loadBean()
-// const player = add([
-//     sprite("bean"),  // renders as a sprite
-//     pos(120, 80),    // position in world
-//     area(),          // has a collider
-//     body(),          // responds to physics and gravity
-// ])
+console.log(kabum.width(), kabum.height())
 
-// onKeyPress("space", () => {
-//     // .jump() is provided by the body() component
-//     player.jump()
-// })
+let SCALE = 2.5;
+let JUMP_FORCE = 2500;
+if(kabum.width() < 1000){
+    SCALE=1.5;
+    JUMP_FORCE=2100;
+}else if(kabum.width() < 2200){
+    SCALE =2.5;
+    JUMP_FORCE=2500
+}else{  
+   SCALE=3;
+    JUMP_FORCE=3000;
+}
 
-// add([
-// 	pos(120, 80),
-// 	sprite("bean"),
-// ])
-const SCALE = 2.5;
+
 const FLOOR_HEIGHT = 4;
-const FLOOR_HIGHT = 40*SCALE;
+let FLOOR_HIGHT = 40*SCALE;
 const FLOOR_COLLISION = 5*SCALE;
+if(kabum.width()<1000){
+    FLOOR_HIGHT=300;
+}
 // const JUMP_FORCE = 1700;
 // const GRAVITY = 4000;
-const JUMP_FORCE = 2500;
+
 let GRAVITY = 8000;
 let SPEED = 10;
 
@@ -72,9 +65,9 @@ function randParallax(min = 0, max = numHorizon) {
     return Math.round(num); // Redondear el número al entero más cercano
 }
 
-loadFont("pixelFont", "fonts/Minecraft.ttf");
+kabum.loadFont("pixelFont", "fonts/Minecraft.ttf");
 
-loadSpriteAtlas("sprites/miquiDino.png", {
+kabum.loadSpriteAtlas("sprites/miquiDino.png", {
     "miquiDino": {
         x: 0,
         y: 0,
@@ -90,7 +83,7 @@ loadSpriteAtlas("sprites/miquiDino.png", {
     }
 });
 
-loadSpriteAtlas("sprites/mexican.png", {
+kabum.loadSpriteAtlas("sprites/mexican.png", {
     "mexican": {
         x: 0,
         y: 0,
@@ -106,7 +99,7 @@ loadSpriteAtlas("sprites/mexican.png", {
     }
 });
 
-loadSpriteAtlas("sprites/bird.png", {
+kabum.loadSpriteAtlas("sprites/bird.png", {
     "bird": {
         x: 0,
         y: 0,
@@ -121,7 +114,7 @@ loadSpriteAtlas("sprites/bird.png", {
     }
 });
 
-loadSpriteAtlas("sprites/clouds.png", {
+kabum.loadSpriteAtlas("sprites/clouds.png", {
     "cloud1": {
         x: 4,
         y: 13,
@@ -130,7 +123,7 @@ loadSpriteAtlas("sprites/clouds.png", {
     }
 });
 
-loadSpriteAtlas("sprites/clouds.png", {
+kabum.loadSpriteAtlas("sprites/clouds.png", {
     "cloud2": {
         x: 7,
         y: 12,
@@ -138,7 +131,7 @@ loadSpriteAtlas("sprites/clouds.png", {
         height: 30,
     }
 });
-loadSpriteAtlas("sprites/clouds.png", {
+kabum.loadSpriteAtlas("sprites/clouds.png", {
     "cloud3": {
         x: 60,
         y: 11,
@@ -147,7 +140,7 @@ loadSpriteAtlas("sprites/clouds.png", {
     }
 });
 
-loadSpriteAtlas("sprites/clouds.png", {
+kabum.loadSpriteAtlas("sprites/clouds.png", {
     "cloud4": {
         x: 60,
         y: 38,
@@ -156,7 +149,7 @@ loadSpriteAtlas("sprites/clouds.png", {
     }
 });
 
-loadSpriteAtlas("sprites/clouds.png", {
+kabum.loadSpriteAtlas("sprites/clouds.png", {
     "cloud5": {
         x: 60,
         y: 66,
@@ -165,7 +158,7 @@ loadSpriteAtlas("sprites/clouds.png", {
     }
 });
 
-loadSpriteAtlas("sprites/clouds.png", {
+kabum.loadSpriteAtlas("sprites/clouds.png", {
     "cloud6": {
         x: 6,
         y: 86,
@@ -175,11 +168,11 @@ loadSpriteAtlas("sprites/clouds.png", {
 });
 
 
-// loadSprite("cloud1","sprites/clouds.png");
+// kabum.loadSprite("cloud1","sprites/clouds.png");
 
 
 
-loadSpriteAtlas("sprites/boom.png", {
+kabum.loadSpriteAtlas("sprites/boom.png", {
     "boom": {
         x: 0,
         y: 0,
@@ -195,11 +188,30 @@ loadSpriteAtlas("sprites/boom.png", {
 
 
 
-loadSprite("face", "sprites/miquiFace.png")
+kabum.loadSpriteAtlas("sprites/miquiCactus.png", {
+    "cactus": {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 50,
+        sliceX: 4,
+    }
+});
+kabum.loadSpriteAtlas("sprites/miquiCactus.png", {
+    "cactus2": {
+        x: 100,
+        y: 0,
+        width: 50,
+        height: 50
+    }
+});
+
+kabum.loadSprite("face", "sprites/miquiFace.png")
 
 
 
-scene("game", () => {
+kabum.scene("game", () => {
+    kabum.destroyAll();
     let score = 0;
     let player;
     let lives = 4;
@@ -208,48 +220,48 @@ scene("game", () => {
     function showLives() {
 
         for (let i = 0; i < lives - 1; i++) {
-            const lifeSprite = add([
-                sprite("miquiDino"),
-                pos(80 + 60 * i, 40),
-                scale(SCALE / 2),
-                rotate(30),
-                color(255, 255, 255),
-                z(1000),
+            const lifeSprite = kabum.add([
+                kabum.sprite("miquiDino"),
+                kabum.pos(80 + 60 * i, 40),
+                kabum.scale(SCALE / 2),
+                kabum.rotate(30),
+                kabum.color(255, 255, 255),
+                kabum.z(1000),
             ]);
 
-            livesSprites.push(lifeSprite); // Añade el sprite al array
+            livesSprites.push(lifeSprite); // Añade el kabum.sprite al array
         }
     }
 
-    add([
-        rect(width(), FLOOR_HEIGHT),
+    kabum.add([
+        kabum.rect(kabum.width(), FLOOR_HEIGHT),
         // outline(4),
-        pos(0, height() - FLOOR_HIGHT),
-        anchor("botleft"),
-        area({ offset: vec2(0, FLOOR_COLLISION) }),
-        body({ isStatic: true }),
-        color(200, 200, 200),
+        kabum.pos(0, kabum.height() - FLOOR_HIGHT),
+        kabum.anchor("botleft"),
+        kabum.area({ offset: kabum.vec2(0, FLOOR_COLLISION) }),
+        kabum.body({ isStatic: true }),
+        kabum.color(200, 200, 200),
         "floor"
     ]);
 
 
     showLives();
     // define gravity
-    setGravity(3000);
+    kabum.setGravity(1000*SCALE);
 
-    // add a game object to screen
+    // kabum.add a game object to screen
 
     
     // let horizonColor = 100
     // let horizonSeparation = 5 * SCALE;
     // let numHorizon = 50;
     // for (let i = 1; i < numHorizon; i++) {
-    //     add([
-    //         rect(width(), FLOOR_HEIGHT / 2),
+    //     kabum.add([
+    //         kabum.rect(kabum.width(), FLOOR_HEIGHT / 2),
     //         // outline(4),
-    //         pos(0, height() - FLOOR_HEIGHT - FLOOR_HIGHT - horizonSeparation),
-    //         anchor("botleft"),
-    //         color(horizonColor - i * horizonColor / numHorizon, horizonColor  -i * horizonColor / numHorizon, horizonColor -i * horizonColor / numHorizon),
+    //         kabum.pos(0, kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT - horizonSeparation),
+    //         kabum.anchor("botleft"),
+    //         kabum.color(horizonColor - i * horizonColor / numHorizon, horizonColor  -i * horizonColor / numHorizon, horizonColor -i * horizonColor / numHorizon),
     //         "horizon"
     //     ]);
     //     horizonSeparation += numHorizon * SCALE / (numHorizon - i);
@@ -260,37 +272,37 @@ scene("game", () => {
     const horizonM=7;
     for (let i = 1; i < numHorizon; i++) {
         horizonSeparation += horizonM * SCALE - i * horizonM * SCALE / numHorizon;
-        add([
-            rect(width(), FLOOR_HEIGHT / 2),
+        kabum.add([
+            kabum.rect(kabum.width(), FLOOR_HEIGHT / 2),
             // outline(4),
-            pos(0, height() - FLOOR_HEIGHT - FLOOR_HIGHT - horizonSeparation),
-            anchor("botleft"),
-            color(horizonColor - i * horizonColor / numHorizon, horizonColor - i * horizonColor / numHorizon, horizonColor - i * horizonColor / numHorizon),
+            kabum.pos(0, kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT - horizonSeparation),
+            kabum.anchor("botleft"),
+            kabum.color(horizonColor - i * horizonColor / numHorizon, horizonColor - i * horizonColor / numHorizon, horizonColor - i * horizonColor / numHorizon),
             "horizon"
         ]);
     }
 
     function addCloud(){
-        let cloudIndex = randi(1, 6);
-        let cloud = add([
-            sprite("cloud"+cloudIndex),
-            scale(SCALE),
-            pos(5*width()/4, rand(0, height()/2)),
-            anchor("center"),
+        let cloudIndex = kabum.randi(1, 6);
+        let cloud = kabum.add([
+            kabum.sprite("cloud"+cloudIndex),
+            kabum.scale(SCALE),
+            kabum.pos(5*kabum.width()/4, kabum.rand(0, kabum.height()/2)),
+            kabum.anchor("center"),
             "cloud",
             speed(SPEED/8),
-            z(0),
-            color(220, 220, 220)
+            kabum.z(0),
+            kabum.color(220, 220, 220)
         ]);
 
         clouds.push(cloud); // Añadir el cactus al array de cacti
-        clouds.length > 10 && destroy(clouds.shift());
+        clouds.length > 10 && kabum.destroy(clouds.shift());
     }
 
 
     function addParallax() {
 
-        let frameIndex = randi(0, 5);
+        let frameIndex = kabum.randi(0, 5);
         let far = randParallax(1, numHorizon);
         let par;
         let parallaxColor = 150;
@@ -300,51 +312,51 @@ scene("game", () => {
         }
 
         if (frameIndex == 4) {
-            par = add([
-                sprite("cactus2"),
-                scale(SCALE - (far + 2) * SCALE / numHorizon),
-                pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
-                anchor("botleft"),
+            par = kabum.add([
+                kabum.sprite("cactus2"),
+                kabum.scale(SCALE - (far + 2) * SCALE / numHorizon),
+                kabum.pos(kabum.width(), kabum.height() - FLOOR_HIGHT - horizonSeparation2),
+                kabum.anchor("botleft"),
                 "cactus",
                 speed(SPEED - (far + 1) * SPEED / numHorizon),
-                color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
+                kabum.color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
             ]);
         } else if (frameIndex < 4) {
-            par = add([
-                sprite("cactus", { frame: frameIndex }),
-                scale(SCALE - (far + 2) * SCALE / numHorizon),
-                pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
-                anchor("botleft"),
+            par = kabum.add([
+                kabum.sprite("cactus", { frame: frameIndex }),
+                kabum.scale(SCALE - (far + 2) * SCALE / numHorizon),
+                kabum.pos(kabum.width(), kabum.height() - FLOOR_HIGHT - horizonSeparation2),
+                kabum.anchor("botleft"),
                 "cactus",
                 speed(SPEED - (far + 1) * SPEED / numHorizon),
-                color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
+                kabum.color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
             ]);
         }
 
         parallax.push(par); // Añadir el cactus al array de cacti
-        parallax.length > 80 && destroy(parallax.shift());
+        parallax.length > 80 && kabum.destroy(parallax.shift());
     }
 
 
 
     addPlayer();
     function addPlayer() {
-        player = add([
+        player = kabum.add([
             // list of components
-            sprite("miquiDino"),
-            pos(80, 40),
-            scale(SCALE, SCALE),
-            area({
-                offset: vec2(12, 3),
-                shape: new Polygon([vec2(16,5), vec2(28, 5), vec2(25, 47), vec2(10, 47)]),
+            kabum.sprite("miquiDino"),
+            kabum.pos(80, 40),
+            kabum.scale(SCALE, SCALE),
+            kabum.area({
+                offset: kabum.vec2(12, 3),
+                shape: new kabum.Polygon([kabum.vec2(16,5), kabum.vec2(28, 5), kabum.vec2(25, 47), kabum.vec2(10, 47)]),
             }),
-            body(),
-            z(5000),
+            kabum.body(),
+            kabum.z(5000),
         ]);
         onColide();
         player.onCollide("floor", () => {
             player.play("run");
-            setGravity(GRAVITY);
+            kabum.setGravity(GRAVITY);
         });
     }
 
@@ -359,8 +371,8 @@ scene("game", () => {
     }
 
     // jump when user press space
-    onKeyPress("space", jump);
-    onClick(jump);
+    kabum.onKeyPress("space", jump);
+    kabum.onClick(jump);
     let cacti = [];
     let parallax = [];
     let clouds= [];
@@ -369,17 +381,17 @@ scene("game", () => {
 
     function addBird() {
 
-        let bird = add([
-            sprite("bird"),
-            scale(-SCALE, SCALE),
-            area({ shape: new Polygon([vec2(15, -25), vec2(15, -50), vec2(35, -50), vec2(35, -25)]) }),
-            // pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE * randi(0, 2)),
-            pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE),
+        let bird = kabum.add([
+            kabum.sprite("bird"),
+            kabum.scale(-SCALE, SCALE),
+            kabum.area({ shape: new kabum.Polygon([kabum.vec2(15, -25), kabum.vec2(15, -50), kabum.vec2(35, -50), kabum.vec2(35, -25)]) }),
+            // kabum.pos(kabum.width(), kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE * kabum.randi(0, 2)),
+            kabum.pos(kabum.width()*2.5/SCALE, kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION - SCALE * 10 - 30 * SCALE),
 
-            anchor("botleft"),
+            kabum.anchor("botleft"),
             "cactus",
             speed(SPEED * 1.3),
-            z(120)
+            kabum.z(120)
         ]);
         bird.play("fly");
         cacti.push(bird); // Añadir el cactus al array de cacti
@@ -387,44 +399,44 @@ scene("game", () => {
 
     function addCactus() {
         let cactus;
-        let frameIndex = randi(0, 21);
+        let frameIndex = kabum.randi(0, 21);
         if (frameIndex < 20) {
             frameIndex = frameIndex % 5
         }
         if (frameIndex == 4) {
-            cactus = add([
-                sprite("cactus2"),
-                scale(SCALE, SCALE),
-                area({ shape: new Polygon([vec2(2,7), vec2(48, 0), vec2(46, -45), vec2(4, -45)]) }),
-                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7),
-                anchor("botleft"),
+            cactus = kabum.add([
+                kabum.sprite("cactus2"),
+                kabum.scale(SCALE, SCALE),
+                kabum.area({ shape: new kabum.Polygon([kabum.vec2(2,7), kabum.vec2(48, 0), kabum.vec2(46, -45), kabum.vec2(4, -45)]) }),
+                kabum.pos(kabum.width()*3.5/SCALE, kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7),
+                kabum.anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
                 speed(SPEED),
-                z(100)
+                kabum.z(100)
             ]);
         } else if (frameIndex < 4) {
-            cactus = add([
-                sprite("cactus", { frame: frameIndex }),
-                scale(SCALE, SCALE),
-                area({ shape: new Polygon([vec2(2), vec2(23, 0), vec2(21, -45), vec2(4, -45)]) }),
-                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7),
-                anchor("botleft"),
+            cactus = kabum.add([
+                kabum.sprite("cactus", { frame: frameIndex }),
+                kabum.scale(SCALE, SCALE),
+                kabum.area({ shape: new kabum.Polygon([kabum.vec2(2), kabum.vec2(23, 0), kabum.vec2(21, -45), kabum.vec2(4, -45)]) }),
+                kabum.pos(kabum.width()*2.5/SCALE, kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7),
+                kabum.anchor("botleft"),
                 // move(LEFT, SPEED),
                 "cactus",
                 speed(SPEED),
-                z(100)
+                kabum.z(100)
             ]);
         } else {
-            cactus = add([ // add a game object to screen  
-                sprite("mexican"), // render as a sprite
-                pos(width(), height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7), // position in world
-                scale(-SCALE, SCALE),
-                area({ shape: new Polygon([vec2(23, 0), vec2(36, 0), vec2(36, -45), vec2(23, -45)]) }),
-                anchor("botleft"),
+            cactus = kabum.add([ // kabum.add a game object to screen  
+                kabum.sprite("mexican"), // render as a kabum.sprite
+                kabum.pos(kabum.width()*2.5/SCALE, kabum.height() - FLOOR_HEIGHT - FLOOR_HIGHT + FLOOR_COLLISION+SCALE*7), // position in world
+                kabum.scale(-SCALE, SCALE),
+                kabum.area({ shape: new kabum.Polygon([kabum.vec2(23, 0), kabum.vec2(36, 0), kabum.vec2(36, -45), kabum.vec2(23, -45)]) }),
+                kabum.anchor("botleft"),
                 speed(SPEED),
                 "cactus",
-                z(100)
+                kabum.z(100)
             ]);
             cactus.play("wait");
         }
@@ -454,30 +466,30 @@ scene("game", () => {
             addCactus();
         }
 
-        wait(respawnTime.getRandom(), spawnCactus);
-        cacti.length > 5 && destroy(cacti.shift());
+        kabum.wait(respawnTime.getRandom(), spawnCactus);
+        cacti.length > 5 && kabum.destroy(cacti.shift());
 
     }
     function spawnParallax() {
         if (moving) {
             addParallax();
         }
-        wait(rand(0.05, 0.2), spawnParallax);
+        kabum.wait(kabum.rand(0.05, 0.2), spawnParallax);
     }
 
     function spawnCloud() {
         if (moving) {
             addCloud();
         }
-        wait(rand(2, 6), spawnCloud);
+        kabum.wait(kabum.rand(2, 6), spawnCloud);
     }
 
     function spawnBird() {
         if (moving && spawn&&score > 3000) {
             addBird(); // Llama a la función para añadir un cactus
         }
-        wait(respawnTime.getRandom() * 4, spawnBird);
-        cacti.length > 5 && destroy(cacti.shift());
+        kabum.wait(respawnTime.getRandom() * 4, spawnBird);
+        cacti.length > 5 && kabum.destroy(cacti.shift());
 
     }
     spawnCactus();
@@ -492,7 +504,7 @@ scene("game", () => {
                 factor = factor2;
             },
             getRandom() {
-                let random = rand(factor, 3.5 * factor);
+                let random = kabum.rand(factor, 3.5 * factor);
                 return random;
             },
             getFactor() {
@@ -540,38 +552,38 @@ scene("game", () => {
         spawn = false;
     }
     function addBoom(x, y) {
-        let boom = add([
-            sprite("boom"),
-            anchor("center"),
-            pos(x, y),
-            scale(SCALE),
-            z(100000),
+        let boom = kabum.add([
+            kabum.sprite("boom"),
+            kabum.anchor("center"),
+            kabum.pos(x, y),
+            kabum.scale(SCALE),
+            kabum.z(100000),
             "boom",
         ]);
         boom.play("boom", {
             loop: false
         });
-        setGravity(3000);
-        shake();
+        kabum.setGravity(1000*SCALE);
+        kabum.shake();
 
-        wait(1, () => {
-            destroy(boom);
+        kabum.wait(1, () => {
+            kabum.destroy(boom);
         });
     }
     // lose if player collides with any game obj with tag "cactus"
     function onColide() {
         player.onCollide("cactus", () => {
             lives--;
-            // Destruye el sprite de la vida
+            // Destruye el kabum.sprite de la vida
 
             addBoom(player.pos.x + 34 * SCALE, player.pos.y + 20 * SCALE);
           
                 stopCacti();
-                destroy(player);
+                kabum.destroy(player);
                 if (lives > 0) {
-                wait(1, () => {
+                kabum.wait(1, () => {
                     moving = true;
-                    wait(2.5, () => { 
+                    kabum.wait(SCALE, () => { 
                     spawn=true
                     livesSprites[lives - 1].destroy();
                     addPlayer();
@@ -579,8 +591,8 @@ scene("game", () => {
                     });
                 });
             } else {
-                wait(0.5, () => {
-                    go("lose", score);
+                kabum.wait(0.5, () => {
+                    kabum.go("lose", score);
 
                 });
             }
@@ -590,19 +602,23 @@ scene("game", () => {
 
     // keep track of score
 
-    const scoreLabel = add([
-        text('- ' + score + ' -', { font: "pixelFont" }),
-        pos(24, 24),z(1000)
+    const scoreLabel = kabum.add([
+        kabum.text(score, { font: "pixelFont" }),
+        kabum.pos(24, 24),kabum.z(1000),
+        kabum.scale(SCALE/2)
     ]);
-    const speedLabel = add([
-        text('speed:' + SPEED, { font: "pixelFont" }),
-        pos(width()-20, 20),
-        anchor("topright"),z(1000)
+    const speedLabel = kabum.add([
+        kabum.text('speed:' + SPEED, { font: "pixelFont" }),
+        kabum.pos(kabum.width()-20, 60),
+        kabum.anchor("topright"),kabum.z(1000),
+        kabum.scale(SCALE/3)
+
     ]);
-    const spawnLabel = add([
-        text('Level: ' + respawnTime, { font: "pixelFont" }),
-        pos(width()-20, 60),
-        anchor("topright"),z(1000)
+    const spawnLabel = kabum.add([
+        kabum.text('Respawn: ' + respawnTime, { font: "pixelFont" }),
+        kabum.pos(kabum.width()-20, 100),
+        kabum.anchor("topright"),kabum.z(1000),
+        kabum.scale(SCALE/3)
 
     ]);
 
@@ -614,7 +630,7 @@ scene("game", () => {
     }
 
     // increment score every frame
-    onUpdate(() => {
+    kabum.onUpdate(() => {
         updateCactiMovement();
         updateParallaxMovement();
         updateCloudMovement();
@@ -624,7 +640,7 @@ scene("game", () => {
         scoreLabel.text = '- '+score+' -';
         let speedtext = SPEED
         speedLabel.text =  'Speed: '+ Math.floor(SPEED -10)
-        spawnLabel.text = 'Level: '+ Math.floor((1-respawnTime.getFactor())*1000);  
+        spawnLabel.text = 'Respawn: '+ Math.floor((1-respawnTime.getFactor())*1000);  
 
         //define Lebels
         if(score <5000){
@@ -645,6 +661,6 @@ scene("game", () => {
 });
 
 
-scene("start", gameStart);
-scene("lose", gameLose);
-go("start");
+kabum.scene("start", gameStart);
+kabum.scene("lose", gameLose);
+kabum.go("start");

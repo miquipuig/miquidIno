@@ -1,12 +1,14 @@
+import { kabum} from './main.js';
 const SCALE = 2.5;
 export const gameLose = (score) => {
+    kabum.destroyAll();
     let gooo = false;
     // display score
-    add([
-        text(score, { font: "pixelFont" }),
-        pos(width() / 2, height() / 2 + 80),
-        scale(SCALE*1.25),
-        anchor("center"),
+    kabum.add([
+        kabum.text(score, { font: "pixelFont" }),
+        kabum.pos(kabum.width() / 2, kabum.height() / 2 + 80),
+        kabum.scale(SCALE*1.25),
+        kabum.anchor("center"),
 
     ]);
     const loseMessages = [
@@ -112,12 +114,12 @@ export const gameLose = (score) => {
         let lines = message.split('\n');
 
         lines.forEach((line, index) => {
-            add([
-                text(line, { font: "pixelFont" }),
-                scale(SCALE),
-                pos(width() / 2, height() / 2 + 50 * SCALE + SCALE * 10 * index),
-                scale(SCALE * 0.3),
-                anchor("center"),
+            kabum.add([
+                kabum.text(line, { font: "pixelFont" }),
+                kabum.scale(SCALE),
+                kabum.pos(kabum.width() / 2, kabum.height() / 2 + 50 * SCALE + SCALE * 10 * index),
+                kabum.scale(SCALE * 0.3),
+                kabum.anchor("center"),
             ]);
         });
 
@@ -157,11 +159,11 @@ export const gameLose = (score) => {
         let face
 
         for (let i = 9; i >= 0; i--) {
-            face = add([
-                sprite("face"),
-                pos(width() / 2 + (alternateEvenOddIndex(i) * SCALE * 25) * decreaseSize(i + 1) + 2 * SCALE, height() / 2),
-                scale(SCALE * decreaseSize(i + 1)),
-                anchor("bot"),
+            face = kabum.add([
+                kabum.sprite("face"),
+                kabum.pos(kabum.width() / 2 + (alternateEvenOddIndex(i) * SCALE * 25) * decreaseSize(i + 1) + 2 * SCALE, kabum.height() / 2),
+                kabum.scale(SCALE * decreaseSize(i + 1)),
+                kabum.anchor("bot"),
                 "face"
             ]);
             faces.push(face);
@@ -170,9 +172,9 @@ export const gameLose = (score) => {
         let vx = -1;
         let ay = -1
         let vy = -1
-        onUpdate(() => {
+        kabum.onUpdate(() => {
 
-            //cambiar pos x para todas las caras
+            //cambiar kabum.pos x para todas las caras
             if (!gooo) {
                 faces.forEach(face => {
                     face.pos.x += vx;
@@ -190,20 +192,20 @@ export const gameLose = (score) => {
         });
 
         let count = 0
-        loop(0.2, () => {
+        kabum.loop(0.2, () => {
 
-            //tiro una moneda al aire usando rand
-            if (randi(0, 2) === 1) {
+            //tiro una moneda al aire usando kabum.rand
+            if (kabum.randi(0, 2) === 1) {
 
-                let size = rand(0.5, 1)
-                let dino = add([
-                    sprite("miquiDino"),
-                    pos(0, height() * 9 / 10 + size * SCALE * 30),
-                    scale(SCALE * size),
-                    anchor("bot"),
-                    move(RIGHT, randi(400, 600)),
+                let size = kabum.rand(0.5, 1)
+                let dino = kabum.add([
+                    kabum.sprite("miquiDino"),
+                    kabum.pos(0, kabum.height() * 9 / 10 + size * SCALE * 30),
+                    kabum.scale(SCALE * size),
+                    kabum.anchor("bot"),
+                    kabum.move(kabum.RIGHT, kabum.randi(400, 600)),
                     "dino",
-                    z(size),
+                    kabum.z(size),
                     
                 ]);
                 dino.play("run");
@@ -212,7 +214,7 @@ export const gameLose = (score) => {
 
 
 
-        loop(0.6, () => {
+        kabum.loop(0.6, () => {
 
             //Si count es impar
             if (count % 2 == 1) {
@@ -233,33 +235,34 @@ export const gameLose = (score) => {
         let va=0
         let faceList = [];
         let pingpong=false;
-        const face = add([
-            sprite("face"),
-            pos(width() / 2 + 10, height() / 2+-SCALE*20),
-            scale(SCALE),
-            anchor("center"),
-            rotate(5),
+        const face = kabum.add([
+            kabum.sprite("face"),
+            kabum.pos(kabum.width() / 2 + 5*SCALE, kabum.height() / 2+-SCALE*25),
+            kabum.scale(SCALE),
+            kabum.anchor("center"),
+            kabum.rotate(5),
             "face"
         ]);
-        loop(0.2, () => {
+        kabum.loop(0.2, () => {
 
-            //tiro una moneda al aire usando rand
-            if (randi(0, 2) === 1) {
+            //tiro una moneda al aire usando kabum.rand
+            if (kabum.randi(0, 2) === 1) {
 
-                let size = rand(0.5, 1)
-                let dino = add([
-                    sprite("miquiDino"),
-                    pos(0, height() * 9 / 10 + size * SCALE * 30),
-                    scale(SCALE * size),
-                    anchor("bot"),
-                    move(RIGHT, randi(400, 600)),
-                    "dino"
+                let size = kabum.rand(0.5, 1)
+                let dino = kabum.add([
+                    kabum.sprite("miquiDino"),
+                    kabum.pos(0, kabum.height() * 9 / 10 + size * SCALE * 30),
+                    kabum.scale(SCALE * size),
+                    kabum.anchor("bot"),
+                    kabum.move(kabum.RIGHT, kabum.randi(400, 600)),
+                    "dino",
+                    kabum.z(size)
                 ]);
                 dino.play("run");
             }
         });
 
-        onUpdate(() => {
+        kabum.onUpdate(() => {
             if(pingpong){
                 for (let i = 0; i < faceList.length; i++) {
                     faceList[i].pos.x += faceList[i].getSpeed().vx;
@@ -279,14 +282,14 @@ export const gameLose = (score) => {
 
             //función que devuelve 1 o -1 de forma aleratoria
                 
-            let vel=rand(2,10);
-            let angle=rand(0,360);
+            let vel=kabum.rand(2,10);
+            let angle=kabum.rand(0,360);
 
             let vx=Math.cos(angle)*vel*SCALE;
             let vy=Math.sin(angle)*vel*SCALE;
 
 
-            let speed={vx,vy,vangle:rand(-1,1)};
+            let speed={vx,vy,vangle:kabum.rand(-1,1)};
             return {
                 getSpeed() {
                     return speed;
@@ -296,43 +299,43 @@ export const gameLose = (score) => {
                 },
             }
         }
-        wait(1, () => {
+        kabum.wait(1, () => {
 
             aa = 0.1;
             va = 1;
 
-        wait(5, () => {
-            let boom= add([
-                sprite("boom"),
-                pos(width() / 2 + 10, height() / 2+-SCALE*20),
-                scale(SCALE*2),
-                anchor("center"),
+        kabum.wait(5, () => {
+            let boom= kabum.add([
+                kabum.sprite("boom"),
+                kabum.pos(kabum.width() / 2 + 10, kabum.height() / 2+-SCALE*25),
+                kabum.scale(SCALE*2),
+                kabum.anchor("center"),
                 "boom",
             ]);
             boom.play("boom", {
                 loop: false
             });
-            shake()
-            destroy(face);
+            kabum.shake()
+            kabum.destroy(face);
 
 
-            wait(0.2, () => {
+            kabum.wait(0.2, () => {
                
                 for (let i = 0; i < 250; i++) {
-                    let face = add([
+                    let face = kabum.add([
 
-                        sprite("face"),
-                        pos(width() / 2 , height() / 2),
-                        scale(SCALE*rand(0.05,0.5)),
-                        anchor("center"),
+                        kabum.sprite("face"),
+                        kabum.pos(kabum.width() / 2 , kabum.height() / 2),
+                        kabum.scale(SCALE*kabum.rand(0.05,0.5)),
+                        kabum.anchor("center"),
                         "face",
                         speed(),
-                        rotate(rand(0,360))
+                        kabum.rotate(kabum.rand(0,360))
                     ]);
                     faceList.push(face);
                 }
-                wait(0.8, () => {
-                    destroy(boom);
+                kabum.wait(0.8, () => {
+                    kabum.destroy(boom);
                 })
                 
                 pingpong=true;
@@ -344,28 +347,28 @@ export const gameLose = (score) => {
     }
     function faceLose() {
         let vx = 10 * SCALE;
-        const face = add([
-            sprite("face"),
-            pos(width() / 2 + 10, height() / 2),
-            scale(SCALE),
-            anchor("bot"),
-            rotate(5),
+        const face = kabum.add([
+            kabum.sprite("face"),
+            kabum.pos(kabum.width() / 2 + 10, kabum.height() / 2),
+            kabum.scale(SCALE),
+            kabum.anchor("bot"),
+            kabum.rotate(5),
             "face"
 
         ]);
         let isFlipped = false;
 
 
-        let dino = add([
-            sprite("miquiDino"),
-            pos(-width() / 2, height() * 4 / 5),
-            scale(SCALE * 1),
-            anchor("top"),
+        let dino = kabum.add([
+            kabum.sprite("miquiDino"),
+            kabum.pos(-kabum.width() / 2, kabum.height() * 4 / 5),
+            kabum.scale(SCALE * 1),
+            kabum.anchor("top"),
             "dino"
         ]);
         dino.play("run");
         let direction = 1; // Dirección de la rotación
-        loop(0.7, () => {
+        kabum.loop(0.7, () => {
             isFlipped = !isFlipped;
             face.scale.x = isFlipped ? -SCALE : SCALE;
             // Cambiar la dirección de la rotación cada vez
@@ -379,7 +382,7 @@ export const gameLose = (score) => {
 
         });
 
-        onUpdate(() => {
+        kabum.onUpdate(() => {
             if (gooo) {
                 dino.pos.x += vx;
             }
@@ -391,16 +394,16 @@ export const gameLose = (score) => {
 
     function goToGame() {
         gooo = true;
-        wait(1.5, () => {
-            destroyAll('dino');
-            destroyAll('face');
+        kabum.wait(1.5, () => {
+            kabum.destroyAll('dino');
+            kabum.destroyAll('face');
             
-            go("game");
+            kabum.go("game");
         });
     }
-    // go back to game with space is pressed
-    onKeyPress("space", () => goToGame());
-    onClick(() => goToGame());
+    // kabum.go back to game with space is pressed
+    kabum.onKeyPress("space", () => goToGame());
+    kabum.onClick(() => goToGame());
 
 
 

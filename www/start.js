@@ -1,10 +1,25 @@
-
+import { kabum } from './main.js';
 export const gameStart = () => {
+
+
+    kabum.destroyAll()
+
+    let SCALE = 2.5;
+    let JUMP_FORCE = 2500;
+    if (kabum.width() < 1000) {
+        SCALE = 2;
+        JUMP_FORCE = 2100;
+    } else if (kabum.width() < 1800) {
+        SCALE = 2.5;
+        JUMP_FORCE = 2500
+    } else {
+        SCALE = 3;
+        JUMP_FORCE = 3000;
+    }
     const FLOOR_HEIGHT = 4;
-    const SCALE = 2.5;
+
     const FLOOR_HIGHT = 100;
     const FLOOR_COLLISION = 30;
-    const JUMP_FORCE = 1700;
     const GRAVITY = 4000;
     let SPEED = 10;
     let numHorizon = 12;
@@ -14,68 +29,51 @@ export const gameStart = () => {
     let parallax = [];
     // Definición de la escena
     const STARTGRAVITY = 0.2;
-    const ROPELENGTH = height() / 2;
+    const ROPELENGTH = kabum.height() / 2;
     let swinging = true;
     let swingingMax = 50; // Grados máximos de inclinación
     let velocidadBalanceo = 2; // Velocidad de balanceo
     //añade cuerda
 
-    loadSpriteAtlas("sprites/miquiCactus.png", {
-        "cactus": {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 50,
-            sliceX: 4,
-        }
-    });
-    loadSpriteAtlas("sprites/miquiCactus.png", {
-        "cactus2": {
-            x: 100,
-            y: 0,
-            width: 50,
-            height: 50
-        }
-    });
 
-    let positionRope = { x: width() / 2, y: 0, angle: 0, vx: 0, vy: 0, va: 0 };
-    let positionCharacter = { x: width() / 2, y: height() / 3, angle: 0, vx: 0, vy: 0, va: 0 };
+    let positionRope = { x: kabum.width() / 2, y: 0, angle: 0, vx: 0, vy: 0, va: 0 };
+    let positionCharacter = { x: kabum.width() / 2, y: kabum.height() / 3, angle: 0, vx: 0, vy: 0, va: 0 };
 
 
-    let rope = add([
-        rect(2 * SCALE, ROPELENGTH),
+    let rope = kabum.add([
+        kabum.rect(2 * SCALE, ROPELENGTH),
         // outline(4),
-        pos(positionRope.x, positionRope.y),
-        anchor("top"),
-        // area({ offset: vec2(0, FLOOR_COLLISION) }),
-        // body({ isStatic: true }),
-        color(127, 127, 127),
+        kabum.pos(positionRope.x, positionRope.y),
+        kabum.anchor("top"),
+        // area({ offset: kabum.vec2(0, FLOOR_COLLISION) }),
+        // kabum.body({ isStatic: true }),
+        kabum.color(127, 127, 127),
         "rope"
     ]);
 
-    let base = add([
-        circle(10 * SCALE),
-        pos(width() / 2, 0),
-        anchor("center"),
-        color(127, 127, 127),
+    let base = kabum.add([
+        kabum.circle(10 * SCALE),
+        kabum.pos(kabum.width() / 2, 0),
+        kabum.anchor("center"),
+        kabum.color(127, 127, 127),
         "base"
     ]);
 
-    let mainCharacter = add([sprite("miquiDino"), pos(positionRope.x - 4 * SCALE, positionRope.y - 7 * SCALE), scale(SCALE), anchor("center"), z(1000), "dino"]);
+    let mainCharacter = kabum.add([kabum.sprite("miquiDino"), kabum.pos(positionRope.x - 4 * SCALE, positionRope.y - 7 * SCALE), kabum.scale(SCALE), kabum.anchor("center"), kabum.z(1000), "dino"]);
     let t = 0;
-    // loop(0.7, () => {
+    // kabum.loop(0.7, () => {
     //     // mainCharacter.scale.x = isFlipped ? -SCALE : SCALE;
 
     //     // Cambiar la dirección de la rotación cada vez
     //     direction *= -1;
     //     // Convertir grados a radianes para la rotación y aplicarla
     //     mainCharacter.angle = -direction * 10;
-    //     mainCharacter.pos.x += direction * 20;
+    //     mainCharacterpos.x += direction * 20;
     // });
-    onUpdate(() => {
+    kabum.onUpdate(() => {
         updateParallaxMovement();
 
-        const tiempo = time() * velocidadBalanceo;
+        const tiempo = kabum.time() * velocidadBalanceo;
 
         pendulumPositionAtAngle(tiempo);
         mainCharacter.pos.x = positionCharacter.x;
@@ -98,7 +96,7 @@ export const gameStart = () => {
         // positionRope.y = y;
         positionRope.angle = a;
         if (swinging) {
-            x = ROPELENGTH * Math.sin(-positionRope.angle * (Math.PI / 180)) + width() / 2;
+            x = ROPELENGTH * Math.sin(-positionRope.angle * (Math.PI / 180)) + kabum.width() / 2;
             y = ROPELENGTH * Math.cos(-positionRope.angle * (Math.PI / 180));
             positionCharacter.vx = x - positionCharacter.x;
             positionCharacter.vy = y - positionCharacter.y;
@@ -106,7 +104,7 @@ export const gameStart = () => {
             positionCharacter.y = y;
             positionCharacter.va = a - positionCharacter.angle;
             positionCharacter.angle = a;
-        
+
         } else {
             moveCharacter();
         }
@@ -118,13 +116,11 @@ export const gameStart = () => {
         positionCharacter.vy += STARTGRAVITY;
         positionCharacter.angle += positionCharacter.va;
     }
-    add([
-        text("PRESS SPACE TO JUMP", { font: "pixelFont" }),
-        pos(width() / 2, height() / 2 + 80),
-        scale(1.5),
-        anchor("center"),
-
-
+    kabum.add([
+        kabum.text("PRESS SPACE TO JUMP", { font: "pixelFont" }),
+        kabum.pos(kabum.width() / 2, kabum.height() / 2 + 80),
+        kabum.scale(SCALE / 1.8),
+        kabum.anchor("center"),
     ]);
 
     // Parallax background
@@ -151,7 +147,7 @@ export const gameStart = () => {
     }
     function addParallax() {
 
-        let frameIndex = randi(0, 5);
+        let frameIndex = kabum.randi(0, 5);
         let far = randParallax(1, numHorizon);
         let par;
         let parallaxColor = 150;
@@ -162,34 +158,34 @@ export const gameStart = () => {
 
         if (frameIndex == 4) {
 
-            par = add([
-                sprite("cactus2"),
-                scale(SCALE - (far + 2) * SCALE / numHorizon),
-                pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
-                anchor("botleft"),
+            par = kabum.add([
+                kabum.sprite("cactus2"),
+                kabum.scale(SCALE - (far + 2) * SCALE / numHorizon),
+                kabum.pos(kabum.width(), kabum.height() - FLOOR_HIGHT - horizonSeparation2),
+                kabum.anchor("botleft"),
                 "cactus",
                 speed(SPEED - (far + 1) * SPEED / numHorizon),
-                color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
+                kabum.color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
             ]);
         } else if (frameIndex < 4) {
-            par = add([
-                sprite("cactus", { frame: frameIndex }),
-                scale(SCALE - (far + 2) * SCALE / numHorizon),
-                pos(width(), height() - FLOOR_HIGHT - horizonSeparation2),
-                anchor("botleft"),
+            par = kabum.add([
+                kabum.sprite("cactus", { frame: frameIndex }),
+                kabum.scale(SCALE - (far + 2) * SCALE / numHorizon),
+                kabum.pos(kabum.width(), kabum.height() - FLOOR_HIGHT - horizonSeparation2),
+                kabum.anchor("botleft"),
                 "cactus",
                 speed(SPEED - (far + 1) * SPEED / numHorizon),
-                color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
+                kabum.color(parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon, parallaxColor - far * parallaxColor / numHorizon)
             ]);
         }
 
         parallax.push(par); // Añadir el cactus al array de cacti
-        parallax.length > 1000 && destroy(parallax.shift());
+        parallax.length > 1000 && kabum.destroy(parallax.shift());
     }
     function spawnParallax() {
         addParallax();
 
-        wait(rand(0.05, 0.2), spawnParallax);
+        kabum.wait(kabum.rand(0.05, 0.2), spawnParallax);
     }
     spawnParallax();
     function updateParallaxMovement() {
@@ -219,22 +215,22 @@ export const gameStart = () => {
 
     //START GAME
 
-    onKeyPress("space", () => {
+    kabum.onKeyPress("space", () => {
         stopSwinging();
     });
-    onClick(() => stopSwinging());
+    kabum.onClick(() => stopSwinging());
 
     function stopSwinging() {
         swinging = false;
-        wait(1.5, () => {
-            shake();
-            wait(1, () => {
-                destroyAll("dino")
-                destroyAll("face")
-                destroyAll("rope")
-                destroyAll("base")
-                // destroyAll("text")
-                go("game");
+        kabum.wait(1.5, () => {
+            kabum.shake();
+            kabum.wait(1, () => {
+                kabum.destroyAll("dino")
+                kabum.destroyAll("face")
+                kabum.destroyAll("rope")
+                kabum.destroyAll("base")
+                // kabum.destroyAll("kabum.text")
+                kabum.go("game");
             });
         });
     }

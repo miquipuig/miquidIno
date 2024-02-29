@@ -1,7 +1,7 @@
 {
 	"name": "mygame",
 	"scripts": {
-		"install":"cp src/main.js src/main_temp.js && replace  'sprites/' 'assets/jueguito/sprites/' src/main_temp.js && replace  'fonts/' 'assets/jueguito/fonts/' src/main_temp.js&& esbuild src/main_temp.js --bundle > www/main.js && ncp src/main.js ../../home/personalPage/src/assets/jueguito/main.js && ncp www ../../home/personalPage/src/assets/jueguito/ -r && rm src/main_temp.js",
+		"install":"esbuild --bundle src/main.js --outfile=src/main_temp.js  &&  replace 'sprites/' 'assets/jueguito/sprites/' src/main_temp.js && replace  'fonts/' 'assets/jueguito/fonts/' src/main_temp.js  && ncp www ../../home/personalPage/src/assets/jueguito/ -r && ncp src/main_temp.js ../../home/personalPage/src/assets/jueguito/main.js",
 		"build": "esbuild --bundle src/main.js --outfile=www/main.js --minify",
 		"dev": "esbuild --bundle src/main.js --outfile=www/main.js --servedir=www",
 		"bundle": "npm run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\"",
@@ -14,3 +14,4 @@
 		"esbuild": "^0.20.1"
 	}
 }
+
